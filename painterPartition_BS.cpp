@@ -1,67 +1,57 @@
 #include<iostream>
 #include<climits>
 using namespace std;
-bool isPossible(int arr[],int n,int m,int mid)
+int findPossible(int arr[],int n,int m,int mid)
 {
-    int studentsReq=1,sum=0;
+    int sum=0,painters=1;
     for(int i=0;i<n;i++)
     {
-        if(arr[i]>mid)
+        sum+=arr[i];
+        if(sum>mid)
         {
-            return false;
-        }
-        if(sum+arr[i]>mid)
-        {
-            studentsReq++;
             sum=arr[i];
-            if(studentsReq>m)
-            {
-                return false;
-            }
+            painters++;
         }
-        else{
-            sum+=arr[i];
-        }
+    
     }
-    return true;
-
+    return painters;
 }
-int painterPartition(int arr[],int n,int m)
+int painterPartition(int boards[],int n,int m)
 {
-    int sum=0;
+    int totalLength=0,k=0;
     for(int i=0;i<n;i++)
     {
-        sum=sum+arr[i];
+        k=max(k,boards[i]);
+        totalLength+=boards[i];
     }
-    int start=0,end=sum,ans=INT_MAX;
-    while (start<=end)
+    int low=k,high=totalLength;
+    while(low<high)
     {
-        if(m>n)
-        return false;
-        int mid=end+(start-end)/2;
-        if(isPossible(arr,n,m,mid))
+        int mid=high+(low-high)/2;
+        int painters = findPossible(boards,n,m,mid);
+        if(painters<=m)
         {
-            ans=min(ans,mid);
-            end=end-1;
+            high=mid;
         }
         else
-        start=mid+1;
+        {
+            low=mid+1;
+        }
     }
-    return ans;
-    
+    return low;
 }
 int main()
 {
     int arr[2000];
     int n,m;
-    cout<<"Enter the length of an array or number of books :"<<endl;
+    cout<<"Enter the length of array :"<<endl;
     cin>>n;
-    cout<<"Enter the number of student to allocate"<<endl;
+    cout<<"Enter the number of days"<<endl;
     cin>>m;
     cout<<"Enter the values of an array :"<<endl;
     for(int i=0;i<n;i++)
     {
         cin>>arr[i];
     }
-    cout<<"Book allocations for a student"<<painterPartition(arr,n,m)<<endl;
+    cout<<"minimum days required of paint "<<painterPartition(arr,n,m)<<endl;
 }
